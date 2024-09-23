@@ -11,17 +11,21 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import vn.hoidanit.jobhunter.dto.LoginDTO;
+import vn.hoidanit.jobhunter.dto.ResLoginDTO;
+import vn.hoidanit.jobhunter.util.SecurityUtil;
 
 @RestController
 public class AuthController {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final SecurityUtil securityUtil;
 
-    AuthController(AuthenticationManagerBuilder authenticationManagerBuilder) {
+    AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, SecurityUtil securityUtil) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
+        this.securityUtil = securityUtil;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginDTO> login(@Valid @RequestBody LoginDTO loginDto) {
+    public ResponseEntity<ResLoginDTO> login(@Valid @RequestBody LoginDTO loginDto) {
 
         // Nạp input gồm username/password vào Security
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
@@ -34,6 +38,11 @@ public class AuthController {
         // SecurityContextHolder.getContext().setAuthentication(authentication);
         // String jwt = this.createToken(authentication);
 
-        return ResponseEntity.ok().body(loginDto);
+         // create a token
+        String access_token = this.securityUtil.createToken(authentication);
+        ResLoginDTO res = new ResLoginDTO();
+        res.setAccessToken(access_token);
+        return ResponseEntity.ok().body(res);
+
     }
 }
