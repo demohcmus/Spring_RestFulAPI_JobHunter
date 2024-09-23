@@ -1,18 +1,18 @@
 package vn.hoidanit.jobhunter.domain;
 
 public class RestResponse<T> {
-    private int status;
+    private int statusCode;
     private String error;
 
     private Object message;
     private T data;
 
     
-    public int getStatus() {
-        return status;
+    public int getStatusCode() {
+        return statusCode;
     }
-    public void setStatus(int status) {
-        this.status = status;
+    public void setStatusCode(int statusCode) {
+        this.statusCode = statusCode;
     }
     public String getError() {
         return error;
