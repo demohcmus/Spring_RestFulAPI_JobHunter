@@ -15,6 +15,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
+import vn.hoidanit.jobhunter.util.SecurityUtil;
 
 @Table(name = "companies")
 @Entity
@@ -25,7 +26,7 @@ public class Company {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @NotBlank(message="tên công ty không được để trống!")
+    @NotBlank(message = "tên công ty không được để trống!")
     private String name;
 
     @Column(columnDefinition = "MEDIUMTEXT")
@@ -35,7 +36,7 @@ public class Company {
 
     private String logo;
 
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+7")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+7")
     private Instant createdAt;
 
     private Instant updatedAt;
@@ -45,8 +46,10 @@ public class Company {
     private String updatedBy;
 
     @PrePersist
-    public void handleBeforeCreate(){
-        this.createdBy="hoidanit";
-        this.createdAt=Instant.now();
+    public void handleBeforeCreate() {
+        this.createdBy = SecurityUtil.getCurrentUserLogin().isPresent() 
+        ? SecurityUtil.getCurrentUserLogin().get() 
+        : "";
+        this.createdAt = Instant.now();
     }
 }
