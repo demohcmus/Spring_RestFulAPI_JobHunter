@@ -1,8 +1,13 @@
 package vn.hoidanit.jobhunter.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import vn.hoidanit.jobhunter.domain.User;
+import vn.hoidanit.jobhunter.dto.Meta;
+import vn.hoidanit.jobhunter.dto.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.repository.UserRepository;
 import java.util.List;
 import java.util.Optional;
@@ -31,8 +36,20 @@ public class UserService {
         return null;
     }
 
-    public List<User> fetchAllUser() {
-        return this.userRepository.findAll();
+    public ResultPaginationDTO fetchAllUser(Specification<User> pageable) {
+        List<User> pageUser = this.userRepository.findAll(pageable);
+        ResultPaginationDTO resultPaginationDTO = new ResultPaginationDTO();
+        Meta meta = new Meta();
+
+        // meta.setPage(pageUser.getNumber() + 1);
+        // meta.setPageSize(pageUser.getSize());
+
+        // meta.setPages(pageUser.getTotalPages());
+        // meta.setTotal(pageUser.getTotalElements());
+
+        resultPaginationDTO.setMeta(meta);
+        resultPaginationDTO.setResult(pageUser);
+        return resultPaginationDTO;
     }
 
     public User handleUpdateUser(User reqUser) {
@@ -49,7 +66,7 @@ public class UserService {
         return currentUser;
     }
 
-    public User handleGetUserByUsername(String username){
+    public User handleGetUserByUsername(String username) {
         return this.userRepository.findByEmail(username);
     }
 

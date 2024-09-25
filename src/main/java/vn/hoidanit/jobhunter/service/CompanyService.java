@@ -1,11 +1,15 @@
 package vn.hoidanit.jobhunter.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 import vn.hoidanit.jobhunter.domain.Company;
+import vn.hoidanit.jobhunter.dto.Meta;
+import vn.hoidanit.jobhunter.dto.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.repository.CompanyRepository;
 
 @Service
@@ -16,25 +20,38 @@ public class CompanyService {
         this.companyRepository = companyRepository;
     }
 
-    public Company handleCreateCompany(Company company){
+    public Company handleCreateCompany(Company company) {
         return this.companyRepository.save(company);
     }
 
-    public void handleDeleteCompany(long id){
+    public void handleDeleteCompany(long id) {
         this.companyRepository.deleteById(id);
     }
 
-    public Company fetchCompanyById(long id){
-        return this.companyRepository.findById(id).isPresent()? this.companyRepository.findById(id).get(): null;
+    public Company fetchCompanyById(long id) {
+        return this.companyRepository.findById(id).isPresent() ? this.companyRepository.findById(id).get() : null;
     }
 
-    public List<Company> fetchAllCompany(){
-        return this.companyRepository.findAll();
+    public ResultPaginationDTO fetchAllCompany(Pageable pageable) {
+        ResultPaginationDTO resultPaginationDTO = new ResultPaginationDTO();
+        Meta meta = new Meta();
+
+        Page<Company> companyPage = this.companyRepository.findAll(pageable);
+        meta.setPage(companyPage.getNumber() + 1);
+        meta.setPageSize(companyPage.getSize());
+
+        meta.setPages(companyPage.getTotalPages());
+        meta.setTotal(companyPage.getTotalElements());
+
+        resultPaginationDTO.setMeta(meta);
+        resultPaginationDTO.setResult(companyPage.getContent());
+
+        return resultPaginationDTO;
     }
 
-    public Company handleUpdateCompany(Company company){
-        Optional<Company> companyOptional= this.companyRepository.findById(company.getId());
-        if(companyOptional.isPresent()){
+    public Company handleUpdateCompany(Company company) {
+        Optional<Company> companyOptional = this.companyRepository.findById(company.getId());
+        if (companyOptional.isPresent()) {
             Company currentCompany = companyOptional.get();
             currentCompany.setName(company.getName());
             currentCompany.setDescription(company.getDescription());
