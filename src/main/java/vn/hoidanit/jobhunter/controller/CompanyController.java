@@ -2,6 +2,7 @@ package vn.hoidanit.jobhunter.controller;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,9 +13,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.turkraft.springfilter.boot.Filter;
+
 import java.util.List;
 import jakarta.validation.Valid;
 import vn.hoidanit.jobhunter.domain.Company;
+import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.service.CompanyService;
 import vn.hoidanit.jobhunter.util.error.IdInvalidException;
 import java.util.Optional;
@@ -50,15 +55,8 @@ public class CompanyController {
 
     @GetMapping("/companies")
     public ResponseEntity<ResultPaginationDTO> getAllCompany(
-            @RequestParam("current") Optional<String> currentOptional,
-            @RequestParam("pageSize") Optional<String> pageSizeOptional) {
-
-        String sCurrent = currentOptional.isPresent() ? currentOptional.get() : "";
-        String sPageSize = pageSizeOptional.isPresent() ? pageSizeOptional.get() : "";
-        int current = sCurrent.equals("") ? 0 : Integer.parseInt(sCurrent) - 1;
-        int pageSize = sPageSize.equals("") ? 10 : Integer.parseInt(sPageSize);
-        Pageable pageable = PageRequest.of(current, pageSize);
-        ResultPaginationDTO resultPaginationDTO = this.companyService.fetchAllCompany(pageable);
+        @Filter Specification<User> spec, Pageable pageable) {
+        ResultPaginationDTO resultPaginationDTO = this.companyService.fetchAllCompany(spec,pageable);
         return ResponseEntity.ok(resultPaginationDTO);
     }
 
