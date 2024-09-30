@@ -54,17 +54,17 @@ public class UserService {
         resultPaginationDTO.setMeta(meta);
 
         // remove sentitive data
-        List<ResUserDTO> listUser= pageUser.getContent()
-        .stream().map(item->new ResUserDTO(
-            item.getId(),
-            item.getName(),
-            item.getEmail(),
-            item.getGender(),
-            item.getAddress(),
-            item.getAge(),
-            item.getCreatedAt(),
-            item.getUpdatedAt()
-        )).collect(Collectors.toList());
+        List<ResUserDTO> listUser = pageUser.getContent()
+                .stream().map(item -> new ResUserDTO(
+                        item.getId(),
+                        item.getName(),
+                        item.getEmail(),
+                        item.getGender(),
+                        item.getAddress(),
+                        item.getAge(),
+                        item.getCreatedAt(),
+                        item.getUpdatedAt()))
+                .collect(Collectors.toList());
 
         resultPaginationDTO.setResult(listUser);
         return resultPaginationDTO;
@@ -93,7 +93,7 @@ public class UserService {
     }
 
     public ResCreateUserDTO convertToResCreateUserDTO(User user) {
-        ResCreateUserDTO res= new ResCreateUserDTO();
+        ResCreateUserDTO res = new ResCreateUserDTO();
         res.setId(user.getId());
         res.setName(user.getName());
         res.setEmail(user.getEmail());
@@ -104,8 +104,9 @@ public class UserService {
 
         return res;
     }
+
     public ResUserDTO convertToResUserDTO(User user) {
-        ResUserDTO res= new ResUserDTO();
+        ResUserDTO res = new ResUserDTO();
         res.setId(user.getId());
         res.setName(user.getName());
         res.setEmail(user.getEmail());
@@ -118,8 +119,8 @@ public class UserService {
         return res;
     }
 
-    public ResUpdateUserDTO  convertToResUpdateUserDTO(User user) {
-        ResUpdateUserDTO res= new ResUpdateUserDTO();
+    public ResUpdateUserDTO convertToResUpdateUserDTO(User user) {
+        ResUpdateUserDTO res = new ResUpdateUserDTO();
         res.setId(user.getId());
         res.setName(user.getName());
         res.setEmail(user.getEmail());
@@ -129,5 +130,13 @@ public class UserService {
         res.setUpdatedAt(user.getUpdatedAt());
 
         return res;
+    }
+
+    public void updateUserToken(String token, String email) {
+        User currentUser = this.handleGetUserByUsername(email);
+        if (currentUser != null) {
+            currentUser.setRefreshToken(token);
+            this.userRepository.save(currentUser);
+        }
     }
 }
