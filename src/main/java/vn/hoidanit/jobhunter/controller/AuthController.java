@@ -44,25 +44,27 @@ public class AuthController {
 
         // //nạp thông tin (nếu xử lý thành công) vào SecurityContext
         // SecurityContextHolder.getContext().setAuthentication(authentication);
-        // String jwt = this.createToken(authentication);
+        // String jwt = this.createAccessToken(authentication);
 
         // create a token
-        String access_token = this.securityUtil.createToken(authentication);
+        String access_token = this.securityUtil.createAccessToken(authentication);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         ResLoginDTO res = new ResLoginDTO();
         User currentUserDB = this.userService.handleGetUserByUsername(loginDto.getUsername());
-        
+
         if (currentUserDB != null) {
             ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin(
-                currentUserDB.getId(),
-                currentUserDB.getEmail(),
-                currentUserDB.getName()
-            );
+                    currentUserDB.getId(),
+                    currentUserDB.getEmail(),
+                    currentUserDB.getName());
             res.setUser(userLogin);
         }
 
         res.setAccessToken(access_token);
+
+        //create refresh token
+        String refresh_token= this.securityUtil.createRefreshToken(loginDto.getUsername(), res);
         return ResponseEntity.ok().body(res);
 
     }
