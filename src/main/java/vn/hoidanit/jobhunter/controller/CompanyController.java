@@ -21,11 +21,11 @@ import java.util.List;
 import jakarta.validation.Valid;
 import vn.hoidanit.jobhunter.domain.Company;
 import vn.hoidanit.jobhunter.domain.User;
+import vn.hoidanit.jobhunter.domain.response.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.service.CompanyService;
 import vn.hoidanit.jobhunter.util.annotation.ApiMessage;
 import vn.hoidanit.jobhunter.util.error.IdInvalidException;
 import java.util.Optional;
-import vn.hoidanit.jobhunter.dto.ResultPaginationDTO;
 
 @RestController
 @RequestMapping("/api/v1")
