@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import vn.hoidanit.jobhunter.domain.Company;
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.domain.response.ResCreateUserDTO;
 import vn.hoidanit.jobhunter.domain.response.ResUpdateUserDTO;
@@ -18,12 +19,21 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final CompanyService companyService;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository,
+            CompanyService companyService) {
         this.userRepository = userRepository;
+        this.companyService = companyService;
     }
 
     public User handleCreateUser(User user) {
+        // check company
+        if (user.getCompany() != null) {
+            Optional<Company> companyOptional = this.companyService.findById(user.getCompany().getId());
+            user.setCompany(companyOptional.isPresent() ? companyOptional.get() : null);
+        }
+
         return this.userRepository.save(user);
     }
 
@@ -62,7 +72,10 @@ public class UserService {
                         item.getAddress(),
                         item.getAge(),
                         item.getCreatedAt(),
-                        item.getUpdatedAt()))
+                        item.getUpdatedAt(),
+                        item.getCompany() != null ? new ResUserDTO.CompanyUser(
+                                item.getCompany().getId(),
+                                item.getCompany().getName()) : null))
                 .collect(Collectors.toList());
 
         resultPaginationDTO.setResult(listUser);
@@ -73,8 +86,16 @@ public class UserService {
         User currentUser = this.fetchUserById(reqUser.getId());
         if (currentUser != null) {
             currentUser.setName(reqUser.getName());
-            currentUser.setEmail(reqUser.getEmail());
-            currentUser.setPassword(reqUser.getPassword());
+            currentUser.setGender(reqUser.getGender());
+            currentUser.setAddress(reqUser.getAddress());
+            currentUser.setAge(reqUser.getAge());            
+
+            // check company
+            if (reqUser.getCompany() != null) {
+                Optional<Company> companyOptional = this.companyService.findById(reqUser.getCompany().getId());
+                currentUser.setCompany(companyOptional.isPresent() ? companyOptional.get() : null);
+            }
+            
             // update user
             currentUser = userRepository.save(currentUser);
             return null;
@@ -100,6 +121,12 @@ public class UserService {
         res.setGender(user.getGender());
         res.setAddress(user.getAddress());
         res.setCreatedAt(user.getCreatedAt());
+        if (user.getCompany() != null) {
+            ResCreateUserDTO.CompanyUser company = new ResCreateUserDTO.CompanyUser(
+                    user.getCompany().getId(),
+                    user.getCompany().getName());
+            res.setCompany(company);
+        }
 
         return res;
     }
@@ -115,6 +142,13 @@ public class UserService {
         res.setCreatedAt(user.getCreatedAt());
         res.setUpdatedAt(user.getUpdatedAt());
 
+        if (user.getCompany() != null) {
+            ResUserDTO.CompanyUser company = new ResUserDTO.CompanyUser(
+                    user.getCompany().getId(),
+                    user.getCompany().getName());
+            res.setCompany(company);
+        }
+
         return res;
     }
 
@@ -128,6 +162,13 @@ public class UserService {
         res.setAddress(user.getAddress());
         res.setUpdatedAt(user.getUpdatedAt());
 
+        if (user.getCompany() != null) {
+            ResUpdateUserDTO.CompanyUser company = new ResUpdateUserDTO.CompanyUser(
+                    user.getCompany().getId(),
+                    user.getCompany().getName());
+            res.setCompany(company);
+        }
+        
         return res;
     }
 
