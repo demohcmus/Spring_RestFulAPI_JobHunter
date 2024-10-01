@@ -1,4 +1,4 @@
-package vn.hoidanit.jobhunter.service;
+package vn.hoidanit.jobhunter.config;
 
 import java.util.Collections;
 
@@ -8,6 +8,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
+
+import vn.hoidanit.jobhunter.service.UserService;
 
 @Component("userDetailsCustom")
 public class UserDetailsCustom implements UserDetailsService {
@@ -20,7 +22,7 @@ public class UserDetailsCustom implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         vn.hoidanit.jobhunter.domain.User user = this.userService.handleGetUserByUsername(username);
-        if(user==null){
+        if (user == null) {
             throw new UsernameNotFoundException("Username/password không hợp lệ!");
         }
         return new User(
