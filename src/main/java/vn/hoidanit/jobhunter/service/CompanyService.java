@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Optional;
 
 import vn.hoidanit.jobhunter.domain.Company;
-import vn.hoidanit.jobhunter.dto.Meta;
 import vn.hoidanit.jobhunter.dto.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.repository.CompanyRepository;
 
@@ -35,7 +34,7 @@ public class CompanyService {
 
     public ResultPaginationDTO fetchAllCompany(Specification spec, Pageable pageable) {
         ResultPaginationDTO resultPaginationDTO = new ResultPaginationDTO();
-        Meta meta = new Meta();
+        ResultPaginationDTO.Meta meta = new ResultPaginationDTO.Meta();
 
         Page<Company> companyPage = this.companyRepository.findAll(spec, pageable);
         meta.setPage(pageable.getPageNumber() + 1);
