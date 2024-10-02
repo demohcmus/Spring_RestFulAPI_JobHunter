@@ -40,8 +40,8 @@ public class CompanyService {
         this.companyRepository.deleteById(id);
     }
 
-    public Company fetchCompanyById(long id) {
-        return this.companyRepository.findById(id).isPresent() ? this.companyRepository.findById(id).get() : null;
+    public Optional<Company> fetchCompanyById(long id) {
+        return this.companyRepository.findById(id);
     }
 
     public ResultPaginationDTO fetchAllCompany(Specification spec, Pageable pageable) {
