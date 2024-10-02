@@ -38,9 +38,9 @@ public class RoleController {
             throws IdInvalidException {
 
         // check name
-        if (role.getName() != null && this.roleService.isNameExist(role.getName())) {
-            throw new IdInvalidException("Role name = " + role.getName() + " đã tồn tại!");
-        }
+        // if (role.getName() != null && this.roleService.isNameExist(role.getName())) {
+        //     throw new IdInvalidException("Role name = " + role.getName() + " đã tồn tại!");
+        // }
 
         Role newRole = this.roleService.create(role);
         return ResponseEntity.status(HttpStatus.CREATED).body(newRole);
