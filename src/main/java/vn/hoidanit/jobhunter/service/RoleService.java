@@ -26,6 +26,9 @@ public class RoleService {
         this.permissionRepository = permissionRepository;
     }
 
+    public Role fetchById(long id){
+        return this.roleRepository.findById(id).orElse(null);
+    }
     public boolean isNameExist(String name) {
         return roleRepository.existsByName(name);
     }

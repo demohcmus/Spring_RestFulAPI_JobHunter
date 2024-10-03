@@ -68,6 +68,11 @@ public class PermissionService {
         return resultPaginationDTO;
     }
 
+    public Permission fetchById(long id) {
+        return this.permissionRepository.findById(id).orElse(null);
+    }
+
+    
     public void delete(long id) {
         // delete role_permission
         Optional<Permission> permissionqOptional = this.permissionRepository.findById(id);
@@ -76,5 +81,15 @@ public class PermissionService {
 
         this.permissionRepository.delete(currentPermission);
     }
+
+    public boolean isSameName(Permission p) {
+        Permission permissionDB = this.fetchById(p.getId());
+        if (permissionDB != null) {
+            if (permissionDB.getName().equals(p.getName()))
+                return true;
+        }
+        return false;
+    }
+
 
 }
