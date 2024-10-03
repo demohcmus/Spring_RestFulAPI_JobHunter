@@ -26,66 +26,74 @@ public class RoleService {
         this.permissionRepository = permissionRepository;
     }
 
-    public Role fetchById(long id){
+    public Role fetchById(long id) {
         return this.roleRepository.findById(id).orElse(null);
     }
+
     public boolean isNameExist(String name) {
         return roleRepository.existsByName(name);
     }
 
-    public Role create(Role role){
+    public Role create(Role role) {
 
         // check list permission
-        if(role.getPermissions()!=null){
-            List<Long> reqPermissions= role.getPermissions()
-            .stream().map(x->x.getId())
-            .collect(Collectors.toList());
+        if (role.getPermissions() != null) {
+            List<Long> reqPermissions = role.getPermissions()
+                    .stream().map(x -> x.getId())
+                    .collect(Collectors.toList());
 
-            List<Permission> dbPermissions= this.permissionRepository.findByIdIn(reqPermissions);
+            List<Permission> dbPermissions = this.permissionRepository.findByIdIn(reqPermissions);
             role.setPermissions(dbPermissions);
         }
-        
+
         return this.roleRepository.save(role);
     }
 
-    public Optional<Role> fetchRoleById(Long id){
+    public Optional<Role> fetchRoleById(Long id) {
         return this.roleRepository.findById(id);
     }
 
-    public Role update(Role role){
+    public Role update(Role role) {
+        Role roleDB = this.fetchById(role.getId());
         // check list permission
-        if(role.getPermissions()!=null){
-            List<Long> reqPermissions= role.getPermissions()
-            .stream().map(x->x.getId())
-            .collect(Collectors.toList());
+        if (role.getPermissions() != null) {
+            List<Long> reqPermissions = role.getPermissions()
+                    .stream().map(x -> x.getId())
+                    .collect(Collectors.toList());
 
-            List<Permission> dbPermissions= this.permissionRepository.findByIdIn(reqPermissions);
+            List<Permission> dbPermissions = this.permissionRepository.findByIdIn(reqPermissions);
             role.setPermissions(dbPermissions);
         }
-        
-        return this.roleRepository.save(role);
+
+        roleDB.setName(role.getName());
+        roleDB.setDescription(role.getDescription());
+        roleDB.setActive(role.isActive());
+        roleDB.setPermissions(role.getPermissions());
+        roleDB = this.roleRepository.save(roleDB);
+        return roleDB;
+
     }
 
-    public void delete(long id){
+    public void delete(long id) {
         this.roleRepository.deleteById(id);
     }
 
-public ResultPaginationDTO fetchAll(Specification spec, Pageable pageable){
-    Page<Role> rolePage = this.roleRepository.findAll(spec, pageable);
+    public ResultPaginationDTO fetchAll(Specification spec, Pageable pageable) {
+        Page<Role> rolePage = this.roleRepository.findAll(spec, pageable);
 
-    ResultPaginationDTO resultPaginationDTO = new ResultPaginationDTO();
-    ResultPaginationDTO.Meta meta = new ResultPaginationDTO.Meta();
+        ResultPaginationDTO resultPaginationDTO = new ResultPaginationDTO();
+        ResultPaginationDTO.Meta meta = new ResultPaginationDTO.Meta();
 
-    meta.setPage(pageable.getPageNumber()+1);
-    meta.setPageSize(pageable.getPageSize());
+        meta.setPage(pageable.getPageNumber() + 1);
+        meta.setPageSize(pageable.getPageSize());
 
-    meta.setPages(rolePage.getTotalPages());
-    meta.setTotal(rolePage.getTotalElements());
+        meta.setPages(rolePage.getTotalPages());
+        meta.setTotal(rolePage.getTotalElements());
 
-    resultPaginationDTO.setMeta(meta);
-    resultPaginationDTO.setResult(rolePage.getContent());
+        resultPaginationDTO.setMeta(meta);
+        resultPaginationDTO.setResult(rolePage.getContent());
 
-    return resultPaginationDTO;
-}
-    
+        return resultPaginationDTO;
+    }
+
 }

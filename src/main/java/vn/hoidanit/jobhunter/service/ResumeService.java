@@ -9,7 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
 import com.turkraft.springfilter.builder.FilterBuilder;
 import com.turkraft.springfilter.converter.FilterSpecification;
 import com.turkraft.springfilter.converter.FilterSpecificationConverter;
@@ -30,7 +29,6 @@ import vn.hoidanit.jobhunter.util.SecurityUtil;
 
 @Service
 public class ResumeService {
-
     @Autowired
     FilterBuilder fb;
 
@@ -110,7 +108,7 @@ public class ResumeService {
         res.setUpdatedBy(resume.getUpdatedBy());
 
         if (resume.getJob() != null) {
-            res.setJob(new ResFetchResumeDTO.JobResume(resume.getJob().getId(), resume.getJob().getName()));
+            res.setCompanyName(resume.getJob().getCompany().getName());
         }
 
         res.setUser(new ResFetchResumeDTO.UserResume(resume.getUser().getId(), resume.getUser().getName()));
@@ -171,5 +169,4 @@ public class ResumeService {
 
         return rs;
     }
-
 }
